@@ -1,109 +1,18 @@
 <!doctype html>
 <html lang="en">
 
-<head>
-  <base href="/">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="RPG Character Builder - Interactive Demo">
-  <title>RPG-ME: Character Builder</title>
+  <head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="RPG Character Builder - Create and customize your character" />
+    <title>RPG Character Builder</title>
+  </head>
 
-  <style>
-    :root, html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
-      background-color: var(--ddd-theme-background, #f4f4f4);
-      color: var(--ddd-theme-primary, #333);
-    }
-
-    #container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--ddd-spacing-4, 16px);
-    }
-
-    rpg-me {
-      display: block;
-      width: 100%;
-      max-width: 960px;
-      border: 2px solid var(--ddd-border-color, #ccc);
-      border-radius: var(--ddd-radius-lg, 8px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: var(--ddd-spacing-4, 16px);
-      margin: var(--ddd-spacing-4, 16px) auto;
-      background-color: var(--ddd-theme-panel, #fff);
-    }
-
-    rpg-me:hover {
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    #instructions {
-      margin-top: var(--ddd-spacing-4, 16px);
-      text-align: center;
-      font-size: var(--ddd-font-size-m, 1rem);
-    }
-
-    #footer {
-      margin-top: var(--ddd-spacing-6, 24px);
-      font-size: var(--ddd-font-size-s, 0.875rem);
-      color: var(--ddd-theme-secondary, #666);
-      text-align: center;
-    }
-    #follow-the-white-rabbit {
-      margin: var(--ddd-spacing-4, 16px) auto;
-      background-color: var(--ddd-accent-4, #ececec);
-      color: black;
-      padding: var(--ddd-spacing-4, 16px);
-      border-radius: var(--ddd-radius-lg, 8px);
-      max-width: 960px;
-    }
-
-    #follow-the-white-rabbit summary {
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #follow-the-white-rabbit[open] summary {
-      background-color: var(--ddd-accent-3, #ddd);
-    }
-
-    #follow-the-white-rabbit ul {
-      padding: 0;
-      margin: var(--ddd-spacing-4, 16px) 0;
-      list-style: none;
-    }
-
-    #follow-the-white-rabbit li {
-      font-size: var(--ddd-font-size-xs, 0.75rem);
-      padding: var(--ddd-spacing-2, 8px);
-    }
-
-    #follow-the-white-rabbit li a {
-      color: var(--ddd-link-color, #007BFF);
-      text-decoration: none;
-    }
-
-    #follow-the-white-rabbit li a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="container">
-    <rpg-me id="rpgCharacterBuilder">
-      RPG Character Builder
-    </rpg-me>
-
-    <div id="instructions">
-      Use the RPG Character Builder above to create and customize your character.
+  <body>
+    <div>
+      <rpg-me>rpg-me</rpg-me>
     </div>
-  </div>
-
-  <script type="module" src="./rpg-me.js"></script>
-</body>
+    <script type="module" src="./rpg-me.js"></script>
+  </body>
 </html>
