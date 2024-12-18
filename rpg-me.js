@@ -1,20 +1,20 @@
 import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
+import "@haxtheweb/rpg-character/rpg-character.js";
 import "wired-elements";
 
 export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
-
   static get tag() {
     return "rpg-me";
   }
 
   constructor() {
     super();
-    this.addons = 0;
-    this.base = 1;
+    this.accessories = 0;
+    this.base = 0;
     this.face = 0;
-    this.faceItem = 0;
+    this.faceAccessory = 0;
     this.hair = 0;
     this.bottom = 0;
     this.top = 0;
@@ -22,73 +22,138 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
     this.hatColor = 0;
     this.hat = 'none';
     this.fire = false;
-    this.moving = false;
+    this.walking = false;
     this.circle = false;
-    this.updateSeed();
+    this.seed = '';
+    this.loadFromUrl();
   }
 
   static get properties() {
     return {
       ...super.properties,
-      addons: { type: Number },
-      base: { type: Number },
-      face: { type: Number },
-      faceItem: { type: Number },
-      hair: { type: Number },
-      bottom: { type: Number },
-      top: { type: Number },
-      skin: { type: Number },
-      hatColor: { type: Number },
-      hat: { type: String },
-      fire: { type: Boolean },
-      moving: { type: Boolean },
-      circle: { type: Boolean },
+      accessories: { type: Number, reflect: true },
+      base: { type: Number, reflect: true },
+      face: { type: Number, reflect: true },
+      faceAccessory: { type: Number, reflect: true },
+      hair: { type: Number, reflect: true },
+      pants: { type: Number, reflect: true },
+      shirt: { type: Number, reflect: true },
+      skin: { type: Number, reflect: true },
+      hatColor: { type: Number, reflect: true },
+      hat: { type: String, reflect: true },
+      fire: { type: Boolean, reflect: true },
+      walking: { type: Boolean, reflect: true },
+      circle: { type: Boolean, reflect: true },
       seed: { type: String },
     };
   }
 
   static get styles() {
-    return [super.styles,
-    css`
-      :host {
-        display: block;
-      }
+    return [
+      super.styles,
+      css`
+        :host {
+          display: block;
+          font-family: var(--ddd-font-primary);
+        }
 
-      .wrapper {
-        display: inline-flex;
-      }
+        .wrapper {
+          display: inline-flex;
+        }
 
-      .character-panel {
-        background: var(--ddd-theme-default-aqua);
-        padding: var(--ddd-spacing-4);
-        width: 600px;
-      }
+        .character-panel {
+          background: var(--ddd-theme-default-slateMaxLight);
+          padding: var(--ddd-spacing-4);
+          width: 600px;
+        }
 
-      .controls-panel-1 {
-        background: var(--ddd-theme-default-darkorange);
-        padding: var(--ddd-spacing-4);
-        width: 420px;
-      }
+        .controls-panel-1 {
+          background: var(--ddd-theme-default-white);
+          padding: var(--ddd-spacing-4);
+          width: 420px;
+        }
 
-      .controls-panel-2 {
-        background: var(--ddd-theme-default-darkorange);
-        width: 420px;
-        justify-content: center;
-      }
+        .controls-panel-2 {
+          background: var(--ddd-theme-default-white);
+          padding: var(--ddd-spacing-4);
+          width: 420px;
+          justify-content: center;
+        }
 
-      wired-combo {
-        background-color: var(--ddd-theme-default-ivory);
-      }
+        wired-item {
+          opacity: 1;
+        }
 
-      .input-group {
-        margin-bottom: var(--ddd-spacing-4);
-      }
+        .input-group {
+          margin-bottom: var(--ddd-spacing-4);
+        }
 
-      .input-group label {
-        display: block;
-        color: var(--ddd-theme-default-darkgreen);
-      }
-    `];
+        .input-group label {
+          display: block;
+          margin-bottom: var(--ddd-spacing-2);
+        }
+
+        .seed-display {
+          margin-top: var(--ddd-spacing-4);
+          margin-right: var(--ddd-spacing-4);
+        }
+
+        .share-button {
+          margin-top: var(--ddd-spacing-4);
+        }
+
+        wired-checkbox {
+          margin: var(--ddd-spacing-2) 0;
+        }
+
+        @media (max-width: 768px) {
+          .wrapper {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .character-panel {
+            max-width: 100%;
+            padding: var(--ddd-spacing-2);
+          }
+
+          .controls-panel {
+            width: 100%;
+            padding: var(--ddd-spacing-2);
+          }
+
+          wired-slider {
+            width: 100%;
+          }
+
+          wired-radio {
+            display: block;
+            margin-bottom: var(--ddd-spacing-2);
+          }
+
+          .input-group {
+            width: 100%;
+          }
+
+        }
+
+        @media (min-width: 769px) {
+          .wrapper {
+            flex-direction: row;
+          }
+
+          .character-panel {
+            background-color: beige;
+            width: 600px;
+          }
+
+          .controls-panel {
+            background-color: white;
+            width: 400px;
+          }
+        }
+      `
+    ];
   }
 
   loadFromUrl() {
@@ -96,75 +161,84 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
     const seed = params.get('seed');
     if (seed && seed.length === 10) {
       this.seed = seed;
-      this.addons = parseInt(seed[0]);
-      this.base = parseInt(seed[1]);
-      this.face = parseInt(seed[2]);
-      this.faceItem = parseInt(seed[3]);
-      this.hair = parseInt(seed[4]);
-      this.bottom = parseInt(seed[5]);
-      this.top = parseInt(seed[6]);
-      this.skin = parseInt(seed[7]);
-      this.hatColor = parseInt(seed[8]);
+      this.accessories = Number(seed[0]);
+      this.base = Number(seed[1]) === 5 ? 5 : 1;
+      this.face = Number(seed[2]);
+      this.faceAccessory = Number(seed[3]);
+      this.hair = Number(seed[4]);
+      this.pants = Number(seed[5]);
+      this.shirt = Number(seed[6]);
+      this.skin = Number(seed[7]);
+      this.hatColor = Number(seed[8]);
+
+      this.requestUpdate();
     }
+
     this.fire = params.get('fire') === 'true';
-    this.moving = params.get('moving') === 'true';
+    this.walking = params.get('walking') === 'true';
     this.circle = params.get('circle') === 'true';
-    if (params.get('hat')) {
-      this.hat = params.get('hat');
+
+    const hat = params.get('hat');
+    if (hat && this.isValidHat(hat)) {
+      this.hat = hat;
     }
   }
 
+  isValidHat(hat) {
+    const validHats = ['none', 'bunny', 'coffee', 'construction', 'cowboy',
+                      'education', 'knight', 'ninja', 'party', 'pirate', 'watermelon'];
+    return validHats.includes(hat);
+  }
+
   updateSeed() {
-    this.seed = `${this.addons}${this.base}${this.face}${this.faceItem}${this.hair}${this.bottom}${this.top}${this.skin}${this.hatColor}`;
+    this.seed = `${this.accessories}${this.base}${this.face}${this.faceAccessory}${this.hair}${this.pants}${this.shirt}${this.skin}${this.hatColor}0`;
     this.updateUrl();
   }
 
   updateUrl() {
     const params = new URLSearchParams();
     params.set('seed', this.seed);
-    params.set('hat', this.hat);
+    if (this.hat !== 'none') {
+      params.set('hat', this.hat);
+    }
     if (this.fire) params.set('fire', 'true');
-    if (this.moving) params.set('moving', 'true');
+    if (this.walking) params.set('walking', 'true');
     if (this.circle) params.set('circle', 'true');
-    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, '', newUrl);
   }
 
   handleInputChange(property, event) {
-    let value;
-    if (event.target.type === 'checkbox') {
-      value = event.target.checked;
+    if (event.target.tagName.toLowerCase() === 'wired-checkbox') {
+      this[property] = event.target.checked;
+    } else if (property === 'base') {
+      const value = event.detail.selected;
+      this[property] = value === "5" ? 5 : 1;
+      this.requestUpdate();
+    } else if (property === 'hat') {
+      this[property] = event.detail.selected;
     } else if (event.detail?.selected !== undefined) {
-      value = event.detail.selected;
+      this[property] = Number(event.detail.selected);
     } else {
-      value = parseInt(event.target.value);
+      this[property] = Number(event.target.value);
     }
 
-    this[property] = value;
-
-    if (property !== 'hat' && property !== 'fire' && property !== 'moving' && property !== 'circle') {
+    if (!['hat', 'fire', 'walking', 'circle'].includes(property)) {
       this.updateSeed();
     } else {
       this.updateUrl();
     }
-    this.requestUpdate();
   }
 
   async shareCharacter() {
     const url = window.location.href;
     try {
       await navigator.clipboard.writeText(url);
-      alert('Link copied to clipboard.');
+      alert('Link copied to clipboard!');
     } catch (err) {
       alert('Share link: ' + url);
     }
-  }
-
-  firstUpdated() {
-    super.firstUpdated();
-    const baseCombo = this.shadowRoot.querySelector('#base');
-    const hatCombo = this.shadowRoot.querySelector('#hat');
-    if (baseCombo) baseCombo.value = this.base.toString();
-    if (hatCombo) hatCombo.value = this.hat;
   }
 
   render() {
@@ -172,21 +246,21 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       <div class="wrapper">
         <div class="character-panel">
           <rpg-character
-            .Addons="${this.addons}"
+            .accessories="${this.accessories}"
             .base="${this.base}"
-            .Face="${this.face}"
-            .faceItem="${this.faceItem}"
+            .face="${this.face}"
+            .faceAccessory="${this.faceAccessory}"
             .hair="${this.hair}"
-            .Bottom="${this.bottom}"
-            .Top="${this.top}"
+            .pants="${this.pants}"
+            .shirt="${this.shirt}"
             .skin="${this.skin}"
-            .hatColor="${this.hatColor}"
+            .hatcolor="${this.hatColor}"
             .hat="${this.hat}"
             ?fire="${this.fire}"
-            ?moving="${this.moving}"
+            ?walking="${this.walking}"
             ?circle="${this.circle}"
-            height="400"
-            width="400"
+            height="420"
+            width="420"
           ></rpg-character>
           <div class="seed-display">
             Character Seed: ${this.seed}
@@ -198,50 +272,51 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
             <label for="base">Character Type</label>
             <wired-combo id="base" .value="${this.base}" @selected="${(e) => this.handleInputChange('base', e)}">
               <wired-item value="1">Male</wired-item>
-              <wired-item value="5">Female</wired-item>
+              <wired-item value="0">Female</wired-item>
             </wired-combo>
           </div>
 
           <div class="input-group">
-            <label for="addons">addons (0-9)</label>
-            <wired-slider id="addons" min="0" max="9" .value="${this.addons}" @change="${(e) => this.handleInputChange('addons', { target: { value: parseInt(e.target.value) } })}"></wired-slider>
+            <label for="accessories">Accessories (0-9)</label>
+            <wired-slider id="accessories" min="0" max="9" .value="${this.accessories}" @change="${(e) => this.handleInputChange('accessories', e)}"></wired-slider>
           </div>
 
           <div class="input-group">
             <label for="face">Face (0-5)</label>
-            <wired-slider id="face" min="0" max="5" .value="${this.face}" @change="${(e) => this.handleInputChange('face', { target: { value: parseInt(e.target.value) } })}"></wired-slider>
+            <wired-slider id="face" min="0" max="5" .value="${this.face}" @change="${(e) => this.handleInputChange('face', e)}"></wired-slider>
           </div>
 
           <div class="input-group">
-            <label for="faceItem">Face Item (0-9)</label>
-            <wired-slider id="faceItem" min="0" max="9" .value="${this.faceitem}" @change="${(e) => this.handleInputChange('faceItem', { target: { value: parseInt(e.target.value) } })}"></wired-slider>
+            <label for="faceAccessory">Face Accessory (0-9)</label>
+            <wired-slider id="faceAccessory" min="0" max="9" .value="${this.faceAccessory}" @change="${(e) => this.handleInputChange('faceAccessory', e)}"></wired-slider>
           </div>
 
           <div class="input-group">
-            <label for="hair">Hair Style (0-9)</label>
-            <wired-slider id="hair" min="0" max="9" .value="${this.hair}" @change="${(e) => this.handleInputChange('hair', { target: { value: parseInt(e.target.value) } })}"></wired-slider>
+            <label for="hair">Hairstyle (0-9)</label>
+            <wired-slider id="hair" min="0" max="9" .value="${this.hair}" @change="${(e) => this.handleInputChange('hair', e)}"></wired-slider>
           </div>
 
           <div class="input-group">
-            <label for="bottom">bottom (0-9)</label>
-            <wired-slider id="bottom" min="0" max="9" .value="${this.bottom}" @change="${(e) => this.handleInputChange('bottom', { target: { value: parseInt(e.target.value) } })}"></wired-slider>
+            <label for="pants">Bottom (0-9)</label>
+            <wired-slider id="pants" min="0" max="9" .value="${this.pants}" @change="${(e) => this.handleInputChange('pants', e)}"></wired-slider>
           </div>
 
           <div class="input-group">
-            <label for="top">top (0-9)</label>
-            <wired-slider id="top" min="0" max="9" .value="${this.top}" @change="${(e) => this.handleInputChange('top', { target: { value: parseInt(e.target.value) } })}"></wired-slider>
+            <label for="shirt">Top (0-9)</label>
+            <wired-slider id="shirt" min="0" max="9" .value="${this.shirt}" @change="${(e) => this.handleInputChange('shirt', e)}"></wired-slider>
           </div>
 
           <div class="input-group">
             <label for="skin">Skin Tone (0-9)</label>
-            <wired-slider id="skin" min="0" max="9" .value="${this.skin}" @change="${(e) => this.handleInputChange('skin', { target: { value: parseInt(e.target.value) } })}"></wired-slider>
+            <wired-slider id="skin" min="0" max="9" .value="${this.skin}" @change="${(e) => this.handleInputChange('skin', e)}"></wired-slider>
           </div>
 
           <div class="input-group">
             <label for="hatColor">Hat Color (0-9)</label>
-            <wired-slider id="hatColor" min="0" max="9" .value="${this.hatColor}" @change="${(e) => this.handleInputChange('hatColor', { target: { value: parseInt(e.target.value) } })}"></wired-slider>
+            <wired-slider id="hatColor" min="0" max="9" .value="${this.hatColor}" @change="${(e) => this.handleInputChange('hatColor', e)}"></wired-slider>
           </div>
         </div>
+
         <div class="controls-panel-2">
           <div class="input-group">
             <label for="hat">Hat Style</label>
@@ -261,26 +336,21 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
           </div>
 
           <div class="input-group">
-            <wired-checkbox ?checked="${this.fire}" @change="${(e) => this.handleInputChange('fire', e)}">Lit On Fire</wired-checkbox>
+            <wired-checkbox ?checked="${this.fire}" @change="${(e) => this.handleInputChange('fire', e)}">On Fire</wired-checkbox>
           </div>
 
           <div class="input-group">
-            <wired-checkbox ?checked="${this.moving}" @change="${(e) => this.handleInputChange('moving', e)}">Moving</wired-checkbox>
+            <wired-checkbox ?checked="${this.walking}" @change="${(e) => this.handleInputChange('walking', e)}">Walking</wired-checkbox>
           </div>
 
           <div class="input-group">
-            <wired-checkbox ?checked="${this.circle}" @change="${(e) => this.handleInputChange('circle', e)}">Display Circle</wired-checkbox>
+            <wired-checkbox ?checked="${this.circle}" @change="${(e) => this.handleInputChange('circle', e)}">Show Circle</wired-checkbox>
           </div>
 
-          <wired-button class="share-button" @click="${this.shareCharacter}">Share this Character Build Link</wired-button>
+          <wired-button class="share-button" @click="${this.shareCharacter}">Share this build</wired-button>
         </div>
       </div>
     `;
-  }
-
-  static get haxProperties() {
-    return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url)
-      .href;
   }
 }
 
